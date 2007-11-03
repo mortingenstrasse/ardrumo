@@ -1,18 +1,15 @@
 /*
  * Ardrumo sketch
  *
- * Use with the Ardumo software here:
+ * Use with the Ardrumo software here:
  * http://code.google.com/p/ardrumo/
  * This is designed to let an Arduino act as a drum machine
- * in GarageBand (sorry, MacOS X only).
+ * in GarageBand (sorry, Mac OS X only).
  */
 
-// define the pins we use
-#define ledPin     13  // for serial out status LED
-
-// analog threshold for piezo sensing
-#define PIEZOTHRESHOLD 5
-#define PADNUM 6
+#define ledPin     13     // status LED pin
+#define PIEZOTHRESHOLD 5  // analog threshold for piezo sensing
+#define PADNUM 6          // aumber of pads
 
 int val;
 
