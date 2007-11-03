@@ -7,14 +7,14 @@
  * in GarageBand (sorry, Mac OS X only).
  */
 
-#define ledPin     13     // status LED pin
+#define LEDPIN     13     // status LED pin
 #define PIEZOTHRESHOLD 5  // analog threshold for piezo sensing
-#define PADNUM 6          // aumber of pads
+#define PADNUM 6          // number of pads
 
 int val;
 
 void setup() {
-  pinMode(ledPin, OUTPUT);
+  pinMode(LEDPIN, OUTPUT);
   Serial.begin(57600);   // set serial output rate
 }
 
@@ -26,12 +26,12 @@ void loop() {
   for(int i = 0; i < PADNUM; i++) {
     val = analogRead(i);
     if( val >= PIEZOTHRESHOLD ) {
-      digitalWrite(ledPin,HIGH);  // indicate we're sending MIDI data
+      digitalWrite(LEDPIN,HIGH);  // indicate we're sending MIDI data
       Serial.print(i);
       Serial.print(",");
       Serial.print(val);
       Serial.println();
-      digitalWrite(ledPin,LOW);
+      digitalWrite(LEDPIN,LOW);
     }
   }
 }
