@@ -18,6 +18,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -86,12 +87,15 @@ public class Main extends JFrame implements SerialPortEventListener {
 		
 		MidiSystem.initMidiSystem("Arduino", "VirtualMIDI");
 		String[] md = MidiSystem.getOutputs();
+		System.out.print("Ardrumo: MIDI outputs: ");
+		System.out.println(Arrays.deepToString(md));
+		
 		mo = MidiSystem.openMidiOutput(0);
 		
 		for(int i=0; i<padCount; i++) {
 			final int padnum = i;
 			
-			pads[i] = new TriggerPad(i,padMap.get(padnum),mo);
+			pads[i] = new TriggerPad(i, 1, padMap.get(padnum), mo);
 			ppds.add(pads[i].getPadPanel());
 		}
 		
