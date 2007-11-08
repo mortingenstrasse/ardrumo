@@ -28,6 +28,7 @@ public class TriggerPad {
 	int padnum;
 	String padsound;
 	int padnote;
+	int padchannel;
 	boolean enabled = true;
 	Color padcolor;
 	Map<String,Integer> noteMap = new HashMap<String,Integer>();
@@ -37,9 +38,10 @@ public class TriggerPad {
 	Integer lastvel = null;
 	int gain = 0;
 	
-	public TriggerPad(int pnum, String snd, MidiOutput mo) {
+	public TriggerPad(int pnum, int pchannel, String snd, MidiOutput mo) {
 		
 		this.padnum = pnum;
+		this.padchannel = pchannel;
 		this.mo = mo;
 		
 		initPadNotes();
@@ -138,9 +140,12 @@ public class TriggerPad {
 		if(enabled) {
 			if (mo != null) {
 				try { 
-					mo.sendMidi(new byte[] { -112, (byte)padnote, (byte)vel }, MidiSystem.getHostTime());
+					int onchannel = -112 - (padchannel - 1);
+					int offchannel = -128 - (padchannel - 1);
+					
+					mo.sendMidi(new byte[] { (byte)onchannel, (byte)padnote, (byte)vel }, MidiSystem.getHostTime());
 					//Thread.sleep(vel);
-					mo.sendMidi(new byte[] { -128, (byte)padnote, 0 }, MidiSystem.getHostTime());
+					mo.sendMidi(new byte[] { (byte)offchannel, (byte)padnote, 0 }, MidiSystem.getHostTime());
 					
 				} catch(Exception me) {
 				}
@@ -176,6 +181,18 @@ public class TriggerPad {
 		return gain;
 	}
 	
+	public void setChannel(int c) {
+		if (c >0 && c <=16) {
+			padchannel = c;
+			System.out.println("Pad " + padnum + " set to channel: " + padchannel);
+		}
+	}
+	
+	public int getChannel() {
+		
+		return padchannel;
+	}
+	
 	public void sendData(int dat) {
 		// scale the data from ()-1023 to a MIDI velocity of 0 to 127
 		int vel = (new Double( (dat + gain) * 127 / 1024)).intValue();
@@ -192,7 +209,7 @@ public class TriggerPad {
 		} else {
 			if( ( vel > lastvel || nowtime > (lasttime + 60000)) && dat > RAWMINTHRESHOLD && vel > 0) {
 				pp.setLEDBlink();
-				System.out.println(nowtime + " : " + padnum + " : " + padnote + " : "+dat + " : scaled="+vel);
+				//System.out.println(nowtime + " : " + padnum + " : " + padnote + " : "+dat + " : scaled="+vel);
 				playNote(vel);
 				
 				lasttime = new Long(nowtime);

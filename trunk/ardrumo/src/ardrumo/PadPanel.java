@@ -7,6 +7,9 @@
 package ardrumo;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -17,9 +20,14 @@ public class PadPanel extends javax.swing.JPanel {
 	private static long BLINKDELAY = 100;
 	TriggerPad tp;
 	
-	public PadPanel(TriggerPad tp) {
+	public PadPanel(final TriggerPad tp) {
 		this.tp = tp;
 		initComponents();
+		
+		SpinnerNumberModel chnls = new SpinnerNumberModel(1,1,16,1);
+		spnChannel.setModel(chnls);
+		spnChannel.setValue(tp.getChannel());
+		spnChannel.setFont(new java.awt.Font("Lucida Grande", 0, 10));
 	}
 	
 	/** This method is called from within the constructor to
@@ -38,6 +46,8 @@ public class PadPanel extends javax.swing.JPanel {
                 dknbThresh = new DKnob();
                 dknbGain = new DKnob();
                 jButton1 = new javax.swing.JButton();
+                spnChannel = new javax.swing.JSpinner();
+                lblChannel = new javax.swing.JLabel();
 
                 pnlAdjst.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
                 pnlAdjst.setMaximumSize(new java.awt.Dimension(500, 500));
@@ -113,27 +123,38 @@ public class PadPanel extends javax.swing.JPanel {
                         }
                 });
 
+                spnChannel.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+
+                lblChannel.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+                lblChannel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                lblChannel.setText("Channel");
+
                 org.jdesktop.layout.GroupLayout pnlAdjstLayout = new org.jdesktop.layout.GroupLayout(pnlAdjst);
                 pnlAdjst.setLayout(pnlAdjstLayout);
                 pnlAdjstLayout.setHorizontalGroup(
                         pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(pnlAdjstLayout.createSequentialGroup()
-                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                .add(pnlAdjstLayout.createSequentialGroup()
+                                                        .add(34, 34, 34)
+                                                        .add(lblLED)
+                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+                                                .add(org.jdesktop.layout.GroupLayout.TRAILING, pnlAdjstLayout.createSequentialGroup()
+                                                        .addContainerGap()
+                                                        .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                                                .add(spnChannel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                                .add(lblChannel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE))
+                                                        .add(22, 22, 22)))
                                         .add(pnlAdjstLayout.createSequentialGroup()
                                                 .addContainerGap()
                                                 .add(jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                .add(22, 22, 22))
-                                        .add(org.jdesktop.layout.GroupLayout.TRAILING, pnlAdjstLayout.createSequentialGroup()
-                                                .addContainerGap(26, Short.MAX_VALUE)
-                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                                        .add(chkEnabled)
-                                                        .add(lblLED))
-                                                .add(36, 36, 36)))
-                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
+                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                         .add(pnlAdjstLayout.createSequentialGroup()
-                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                        .add(dknbThresh, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                        .add(lblThresh, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                                        .add(dknbThresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                                                        .add(lblThresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                                 .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                                         .add(pnlAdjstLayout.createSequentialGroup()
                                                                 .add(12, 12, 12)
@@ -142,43 +163,50 @@ public class PadPanel extends javax.swing.JPanel {
                                                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                 .add(lblGain, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                                                 .add(20, 20, 20))))
-                                        .add(cboPadSnd, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .add(126, 126, 126))
+                                        .add(pnlAdjstLayout.createSequentialGroup()
+                                                .add(chkEnabled)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE)
+                                                .add(cboPadSnd, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 141, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
+                                .addContainerGap())
                 );
                 pnlAdjstLayout.setVerticalGroup(
                         pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(pnlAdjstLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                        .add(cboPadSnd, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                        .add(chkEnabled))
+                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                        .add(pnlAdjstLayout.createSequentialGroup()
+                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                        .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                                                .add(chkEnabled)
+                                                                .add(cboPadSnd, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                                        .add(pnlAdjstLayout.createSequentialGroup()
+                                                                .add(lblLED)
+                                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                                .add(jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                                .add(21, 21, 21)
+                                                .add(spnChannel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                        .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                                .add(org.jdesktop.layout.GroupLayout.LEADING, dknbGain, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                                                .add(org.jdesktop.layout.GroupLayout.LEADING, dknbThresh, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 74, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                        .add(pnlAdjstLayout.createSequentialGroup()
-                                                .add(14, 14, 14)
-                                                .add(lblLED)
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                        .add(pnlAdjstLayout.createSequentialGroup()
-                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                                        .add(org.jdesktop.layout.GroupLayout.LEADING, dknbGain, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                                                        .add(org.jdesktop.layout.GroupLayout.LEADING, dknbThresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                                        .add(lblThresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .add(lblGain, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                                .add(75, 75, 75))
+                                .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                        .add(pnlAdjstLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                                .add(lblGain, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                .add(lblThresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .add(lblChannel))
+                                .addContainerGap())
                 );
 
                 org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
                 this.setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(pnlAdjst, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE)
+                        .add(pnlAdjst, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 263, Short.MAX_VALUE)
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(pnlAdjst, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 146, Short.MAX_VALUE)
+                        .add(pnlAdjst, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 );
         }// </editor-fold>//GEN-END:initComponents
 
@@ -267,10 +295,12 @@ public class PadPanel extends javax.swing.JPanel {
         private DKnob dknbGain;
         private DKnob dknbThresh;
         private javax.swing.JButton jButton1;
+        private javax.swing.JLabel lblChannel;
         private javax.swing.JLabel lblGain;
         private javax.swing.JLabel lblLED;
         private javax.swing.JLabel lblThresh;
         private javax.swing.JPanel pnlAdjst;
+        private javax.swing.JSpinner spnChannel;
         // End of variables declaration//GEN-END:variables
 	
 }
